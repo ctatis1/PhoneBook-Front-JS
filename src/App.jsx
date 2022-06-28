@@ -1,16 +1,16 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Contacts from './components/Contacts';
 import PersonForm from './components/PersonForm';
+import contactServices from './services/contacts';
 
 const App = () => {
 
     const [people, setPeople] = useState([]);
 
     useEffect(() => {
-        axios
-            .get('http://localhost:3001/persons')
-            .then(response => setPeople(response.data));
+        contactServices
+            .getAll()
+            .then(initialPeople => setPeople(initialPeople));
     }, []);
 
     return (
@@ -19,7 +19,7 @@ const App = () => {
             <h3>Form</h3>
             <PersonForm people={people} setPeople={setPeople}/>
             <h3>Contacts</h3>
-            <Contacts contacts={people}/>
+            <Contacts contacts={people} setPeople={setPeople}/>
         </div>
     );
 }

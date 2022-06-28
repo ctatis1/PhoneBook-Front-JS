@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import contactServices from '../services/contacts';
 
 const PersonForm = ({people, setPeople}) => {
 
@@ -11,12 +12,26 @@ const PersonForm = ({people, setPeople}) => {
             name: newName,
             number: newNumber
         }
-        if(people.find(person => person.name === newPerson.name)){
-            alert(`${newName} is already on the phonebook`);
+        const actualPerson = people.find(person => person.name === newPerson.name);
+
+        if(actualPerson){
+            const confirm = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`);
+            if(confirm){
+                contactServices
+                    .update(actualPerson.id, newPerson)
+                    .then(updatedPerson => setPeople(people.replace(person => person.id === updatedPerson.id)))
+                window.location.reload();
+            }else{
+                alert(`${newName} is already on the phonebook`);
+            }
         }else{
-            setPeople(people.concat(newPerson));
-            setNewName('')
-            setNewNumber('')
+            contactServices
+                .create(newPerson)
+                .then(returnedContact => {
+                    setPeople(people.concat(returnedContact));
+                    setNewName('')
+                    setNewNumber('')
+                })
         }
     }
 
