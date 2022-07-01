@@ -1,29 +1,41 @@
-import React from 'react';
+import React, {useState} from 'react';
 import contactServices from '../services/contacts';
+import Contact from './Contact';
+import Notification from './Notification';
+
 
 const Contacts = ({contacts, setPeople}) => {
 
-    const confirmDelete = (contact) => {
+    const [msg, setMsg] = useState('');
+
+    const confirmDelete = (e, contact) => {
+        e.preventDefault();
+        const deletedId = contact.id;
         const confirm = window.confirm(`Delete ${contact.name}?`)
         if(confirm){
             contactServices
                 .deleteOne(contact.id)
-                .then(deletedContact => {
-                    contacts = contacts.filter(contact => contact.id !== deletedContact.id)
+                .then(() => {
+                    contacts = contacts.filter(contact => contact.id !== deletedId)
                     setPeople(contacts);
-                    window.location.reload()
+                    setMsg(`${contact.name} was deleted.`);
+                    setTimeout(() => {
+                        setMsg('')
+                    }, 3000);
                 })
         }
     }
 
     return (
-        contacts.map(contact => (
-            <div>
-                {contact.name}, {contact.number}
-                <button onClick={() => confirmDelete( contact)}>Delete</button>
-            </div>
-            
-        ))
+        <>
+        <Notification message={msg}/>    
+        {contacts.map(contact => (
+            <form onSubmit={(e) => confirmDelete(e,contact)}>
+                <Contact contact={contact} /> 
+            </form>
+        ))}
+        </>
+
     );
 }
 

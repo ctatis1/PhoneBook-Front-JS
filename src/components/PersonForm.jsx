@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import contactServices from '../services/contacts';
+import Notification from './Notification';
 
 const PersonForm = ({people, setPeople}) => {
 
     const [newName, setNewName] = useState('Your Name...');
     const [newNumber, setNewNumber] = useState('Your Number...');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const addPeople = (e) => {
         e.preventDefault();
@@ -13,14 +15,25 @@ const PersonForm = ({people, setPeople}) => {
             number: newNumber
         }
         const actualPerson = people.find(person => person.name === newPerson.name);
-
         if(actualPerson){
             const confirm = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`);
             if(confirm){
+                console.log(actualPerson.id);
                 contactServices
                     .update(actualPerson.id, newPerson)
-                    .then(updatedPerson => setPeople(people.replace(person => person.id === updatedPerson.id)))
-                window.location.reload();
+                    .then(updatedPerson => {
+                        setPeople(people.map(person => person.id !== actualPerson.id ? person: updatedPerson));
+                        setErrorMessage(`${newName} was updated.`)
+                        setTimeout(() => {
+                            setErrorMessage('')
+                        }, 3000);
+                    }).catch(error => {
+                        setErrorMessage(`${error}`)
+                        setTimeout(() => {
+                            setErrorMessage('')
+                        }, 3000);
+                        
+                    })
             }else{
                 alert(`${newName} is already on the phonebook`);
             }
@@ -31,6 +44,10 @@ const PersonForm = ({people, setPeople}) => {
                     setPeople(people.concat(returnedContact));
                     setNewName('')
                     setNewNumber('')
+                    setErrorMessage('added')
+                    setTimeout(() => {
+                        setErrorMessage('')
+                    }, 3000);
                 })
         }
     }
@@ -43,17 +60,20 @@ const PersonForm = ({people, setPeople}) => {
     }
 
     return (
-        <form onSubmit={addPeople}>
-            <div>
-                name: <input value={newName} onChange={handleNameChange}/>
-            </div>
-            <div>
-                number: <input value={newNumber} onChange={handleNumberChange}/>
-            </div>
-            <div>
-                <button type='submit'>Add</button>
-            </div>
-        </form>
+        <>
+            <Notification message={errorMessage}/>
+            <form onSubmit={addPeople}>
+                <div>
+                    name: <input value={newName} onChange={handleNameChange}/>
+                </div>
+                <div>
+                    number: <input value={newNumber} type='number' min="1" onChange={handleNumberChange}/>
+                </div>
+                <div>
+                    <button type='submit'>Add</button>
+                </div>
+            </form>
+        </>
     );
 }
 
