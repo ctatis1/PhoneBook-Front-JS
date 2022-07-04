@@ -5,7 +5,7 @@ import Notification from './Notification';
 const PersonForm = ({people, setPeople}) => {
 
     const [newName, setNewName] = useState('Your Name...');
-    const [newNumber, setNewNumber] = useState('Your Number...');
+    const [newNumber, setNewNumber] = useState(1);
     const [errorMessage, setErrorMessage] = useState('');
 
     const addPeople = (e) => {
@@ -49,6 +49,7 @@ const PersonForm = ({people, setPeople}) => {
                         setErrorMessage('')
                     }, 3000);
                 })
+                .catch(error => console.log(error.response.data))
         }
     }
 

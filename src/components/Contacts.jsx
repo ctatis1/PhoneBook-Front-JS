@@ -31,7 +31,7 @@ const Contacts = ({contacts, setPeople}) => {
         <Notification message={msg}/>    
         {contacts.map(contact => (
             <form onSubmit={(e) => confirmDelete(e,contact)}>
-                <Contact contact={contact} /> 
+                <Contact key={contact.id} contact={contact} /> 
             </form>
         ))}
         </>

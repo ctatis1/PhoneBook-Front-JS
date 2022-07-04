@@ -1,23 +1,32 @@
 import axios from 'axios';
-const URL = '/api/persons/'
+const URL = '/api/contacts'
 
-const getAll = () => {
-    const req = axios.get(URL)
-    return req.then(response => response.data);
+let token = null
+
+const getToken = (newToken) => {
+    token = `bearer ${newToken}`
 }
-const create = (newObject) => {
-    const req = axios.post(URL, newObject)
-    return req.then(response => response.data);
+
+const getAll = async () => {
+    const response = await axios.get(URL)
+    return response.data
 }
-const update = (id, newObject) => {
-    const req = axios.put(`${URL}/${id}`, newObject)
-    return req.then(res => res.data)
+const create = async (newObject) => {
+    const config = {
+        headers: { Authorization: token }
+    }
+    const response = await axios.post(URL, newObject, config)
+    return response.data
 }
-const deleteOne = (id) => {
-    const req = axios.delete(`${URL}/${id}`)
-    return req.then(res => res.data)
+const update = async (id, newObject) => {
+    const response = await axios.put(`${URL}/${id}`, newObject)
+    return response.data
+}
+const deleteOne = async (id) => {
+    const response = await axios.delete(`${URL}/${id}`)
+    return response.data
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default {getAll, create, update, deleteOne}
+export default {getAll, create, update, deleteOne, getToken}
 
