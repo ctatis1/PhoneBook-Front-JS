@@ -28,7 +28,7 @@ const App = () => {
             setUser(user)
             contactServices.getToken(user.token)
         }
-    }, [user]);
+    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
