@@ -1,18 +1,12 @@
 import React, {useState} from 'react';
 import contactServices from '../services/contacts';
 import Notification from './Notification';
-import Toggleable from './Toggleable';
+import { useNavigate } from 'react-router-dom';
 
 
 const Contacts = ({contacts, setPeople}) => {
 
-    const contactStyle = {
-        paddingTop: 10,
-        paddingLeft: 2,
-        border: 'solid',
-        borderWidth: 1,
-        marginBottom: 5
-      }
+    const history = useNavigate();
     const [msg, setMsg] = useState('');
 
     const confirmDelete = (e, contact) => {
@@ -37,15 +31,13 @@ const Contacts = ({contacts, setPeople}) => {
         <>
         <Notification message={msg}/>    
         {contacts.map(contact => (
-            <div className='contacts' style={contactStyle}>
-                {contact.name} 
-                <Toggleable buttonLabel='View'>
-                    <form key={contact.id} onSubmit={(e) => confirmDelete(e,contact)}>
+            <div>
+                {contact.name} <button onClick={() => history(`/contacts/${contact.id}`)}>View</button>
+                    {/* <form key={contact.id} onSubmit={(e) => confirmDelete(e,contact)}>
                         <p>Name: {contact.name}</p> 
                         <p>Number: {contact.number}</p> 
                         <button type='submit'> Delete</button>
-                    </form>
-                </Toggleable> 
+                    </form> */}
             </div>
             
         ))}

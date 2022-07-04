@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Contacts from './components/Contacts';
 import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
-import PersonForm from './components/PersonForm';
-import Toggleable from './components/Toggleable';
 import contactServices from './services/contacts';
 import loginServices from './services/login';
+import { BrowserRouter as Router, Route, Routes, Link} from 'react-router-dom';
+import Home from './pages/Home';
+import Phonebook from './pages/Phonebook';
+import Contact from './pages/Contact';
 
 const App = () => {
 
@@ -51,41 +52,48 @@ const App = () => {
         }
     }
 
-    const loggedIn = () => {
-        return(
-            <>
-            <h2>
-                {user.name} <button onClick={() => {
-                    window.localStorage.removeItem('loggedContactAppUser')
-                    setUser(null)
-                }}>Logout</button>
-            </h2>
-            <Toggleable buttonLabel='New Contact'>
-                <h3>Form</h3>
-                <PersonForm people={people} setPeople={setPeople}/>
-            </Toggleable>
-            <h3>Contacts</h3>
-            <Contacts contacts={people} setPeople={setPeople}/>
-            </>
-        );
-    }
-
     return (
-        <div>
-            <h1>PhoneBook</h1>
-            <Notification message={msg}/>
-            {user===null?
-                <LoginForm 
-                    password={password} 
-                    username={username} 
-                    handleLogin={handleLogin}
-                    setPassword={setPassword}
-                    setUsername={setUsername}
-                    />
-                :
-                loggedIn()    
-            }
-        </div>
+        <Router>
+            <div>
+                <h1>PhoneBook</h1>
+                <Notification message={msg}/>
+                <div>
+                    <Link style={{padding:5}} to='/'>Home</Link>
+                    <Link style={{padding:5}} to='/contacts'>Contacts</Link>
+                    <Link style={{padding:5}} to='/users'>Users</Link>
+                    {user ? 
+                        <h2>
+                            {user.name} <button onClick={() => {
+                                window.localStorage.removeItem('loggedContactAppUser')
+                                setUser(null)
+                            }}>Logout</button>
+                        </h2>
+                        :
+                        <LoginForm 
+                            password={password} 
+                            username={username} 
+                            handleLogin={handleLogin}
+                            setPassword={setPassword}
+                            setUsername={setUsername}
+                            />
+                }
+                </div>
+                <Routes>
+                    <Route path='/' element={ <Home /> }/>
+                    <Route path='/contacts' element={ 
+                        user?
+                            <Phonebook people={people} setPeople={setPeople} /> 
+                            :
+                            <h3>You must be logged in to see the Contacts</h3>
+                    }/>
+                    <Route path='/contacts/:id' element={ 
+                       
+                            <Contact contacts={people} /> 
+                            
+                    }/>
+                </Routes>
+            </div>
+        </Router>
     );
 }
 
