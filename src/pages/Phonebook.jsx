@@ -8,6 +8,7 @@ const Phonebook = ({people, setPeople}) => {
 
     return (
         <div>
+            <h3>Add Contact</h3>
             <Toggleable buttonLabel='New Contact'>
                 <h3>Form</h3>
                 <PersonForm people={people} setPeople={setPeople}/>

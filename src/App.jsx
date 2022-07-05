@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Route, Routes, Link} from 'react-router-dom';
 import Home from './pages/Home';
 import Phonebook from './pages/Phonebook';
 import Contact from './pages/Contact';
+import { Button, Alert } from 'react-bootstrap';
+import NavBar from './components/NavBar';
 
 const App = () => {
 
@@ -42,58 +44,62 @@ const App = () => {
 
             contactServices.getToken(user.token)
             setUser(user);
+            setMsg(`Welcome ${user.username}`)
             setUsername('');
             setPassword('');
+            setTimeout(() => {
+                setMsg(null)
+            }, 3000);
         } catch (error) {
             setMsg(`Wrong credentials`)
             setTimeout(() => {
                 setMsg(null)
-            }, 5000);
+            }, 3000);
         }
     }
 
     return (
-        <Router>
-            <div>
-                <h1>PhoneBook</h1>
-                <Notification message={msg}/>
-                <div>
-                    <Link style={{padding:5}} to='/'>Home</Link>
-                    <Link style={{padding:5}} to='/contacts'>Contacts</Link>
-                    <Link style={{padding:5}} to='/users'>Users</Link>
-                    {user ? 
-                        <h2>
-                            {user.name} <button onClick={() => {
-                                window.localStorage.removeItem('loggedContactAppUser')
-                                setUser(null)
-                            }}>Logout</button>
-                        </h2>
-                        :
-                        <LoginForm 
-                            password={password} 
-                            username={username} 
-                            handleLogin={handleLogin}
-                            setPassword={setPassword}
-                            setUsername={setUsername}
-                            />
-                }
-                </div>
-                <Routes>
-                    <Route path='/' element={ <Home /> }/>
-                    <Route path='/contacts' element={ 
-                        user?
-                            <Phonebook people={people} setPeople={setPeople} /> 
+            <Router>
+                <NavBar user={user}/>
+                <div className='container'>
+                    {(msg && 
+                        <Alert variant='success'>
+                            {msg}
+                        </Alert>)}
+                    <div>
+                        {user ? 
+                            <h2>
+                                {user.name} <Button onClick={() => {
+                                    window.localStorage.removeItem('loggedContactAppUser')
+                                    setUser(null)
+                                }}>Logout</Button>
+                            </h2>
                             :
-                            <h3>You must be logged in to see the Contacts</h3>
-                    }/>
-                    <Route path='/contacts/:id' element={ 
-                       
-                            <Contact contacts={people} /> 
-                            
-                    }/>
-                </Routes>
-            </div>
-        </Router>
+                            <LoginForm 
+                                password={password} 
+                                username={username} 
+                                handleLogin={handleLogin}
+                                setPassword={setPassword}
+                                setUsername={setUsername}
+                                />
+                    }
+                    </div>
+                    <Routes>
+                        <Route path='/' element={ <Home /> }/>
+                        <Route path='/contacts' element={ 
+                            user?
+                                <Phonebook people={people} setPeople={setPeople} /> 
+                                :
+                                <h3>You must be logged in to see the Contacts</h3>
+                        }/>
+                        <Route path='/contacts/:id' element={ 
+                        
+                                <Contact contacts={people} /> 
+                                
+                        }/>
+                    </Routes>
+                </div>
+            </Router> 
     );
 }
 

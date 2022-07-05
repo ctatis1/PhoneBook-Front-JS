@@ -1,3 +1,4 @@
+import { Button } from 'react-bootstrap';
 import React, { useState } from 'react';
 
 const Toggleable = (props) => {
@@ -13,11 +14,11 @@ const Toggleable = (props) => {
     return (
         <div>
             <div style={hiddenWhenVisible}>
-                <button onClick={toggleVisibility}>{props.buttonLabel}</button>
+                <Button onClick={toggleVisibility}>{props.buttonLabel}</Button>
             </div>
             <div style={showWhenVisible}>
                 {props.children}
-                <button onClick={toggleVisibility}>Cancel</button>
+                <Button onClick={toggleVisibility}>Cancel</Button>
             </div>
         </div>
     );

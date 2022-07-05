@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import contactServices from '../services/contacts';
 import Notification from './Notification';
+import { Button, Form} from 'react-bootstrap';
 
 const PersonForm = ({people, setPeople}) => {
 
@@ -63,7 +64,7 @@ const PersonForm = ({people, setPeople}) => {
     return (
         <>
             <Notification message={errorMessage}/>
-            <form onSubmit={addPeople}>
+            <Form onSubmit={addPeople}>
                 <div>
                     name: <input value={newName} onChange={handleNameChange}/>
                 </div>
@@ -71,9 +72,9 @@ const PersonForm = ({people, setPeople}) => {
                     number: <input value={newNumber} type='number' min="1" onChange={handleNumberChange}/>
                 </div>
                 <div>
-                    <button type='submit'>Add</button>
+                    <Button type='submit'>Add</Button>
                 </div>
-            </form>
+            </Form>
         </>
     );
 }
